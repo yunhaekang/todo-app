@@ -1,0 +1,2 @@
+# Server settings for test
+# 공백 파일로 남겨두면 dev 사용 시 h2 데이터베이스를 사용할 수 있다.
