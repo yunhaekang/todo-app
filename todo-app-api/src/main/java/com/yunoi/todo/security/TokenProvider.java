@@ -5,11 +5,10 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.io.Encoders;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -43,6 +42,18 @@ public class TokenProvider {
                 .setIssuer("todo app")  // iss
                 .setIssuedAt(new Date()) // iat
                 .setExpiration(expiryDate)  //exp
+                .compact();
+    }
+
+    // 인증 컴포넌트에서 호출할 create 오버로딩
+    public String create(final Authentication authentication) {
+        ApplicationOAuth2User userPrincipal = (ApplicationOAuth2User) authentication.getPrincipal();
+        Date expiryDate = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+
+        return Jwts.builder().signWith(key)
+                .setSubject(userPrincipal.getName())    // 리턴값: id
+                .setIssuedAt(new Date())
+                .setExpiration(expiryDate)
                 .compact();
     }
 

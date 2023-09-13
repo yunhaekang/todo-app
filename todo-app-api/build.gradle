@@ -38,8 +38,22 @@ dependencies {
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 	runtimeOnly 'com.mysql:mysql-connector-j:8.1.0'
+	// https://mvnrepository.com/artifact/org.springframework.security/spring-security-oauth2-client
+	implementation 'org.springframework.security:spring-security-oauth2-client'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+// profile 기본값으로 dev 설정
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'dev' : profile
+
+// 리소스 디렉토리 추가
+sourceSets {
+	main {
+		resources {
+			srcDirs "src/main/resources-env/${profile}"
+		}
+	}
 }
