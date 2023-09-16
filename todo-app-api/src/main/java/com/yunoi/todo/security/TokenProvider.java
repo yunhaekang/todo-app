@@ -52,6 +52,7 @@ public class TokenProvider {
 
         return Jwts.builder().signWith(key)
                 .setSubject(userPrincipal.getName())    // 리턴값: id
+                .setIssuer("todo app")
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .compact();
