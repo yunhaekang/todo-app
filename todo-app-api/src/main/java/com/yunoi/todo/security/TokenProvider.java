@@ -4,9 +4,13 @@ import com.yunoi.todo.model.UserEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -19,15 +23,20 @@ import java.util.Date;
  *  유저 정보를 받아 JWT 생성
  * */
 @Slf4j
-@Service
-public class TokenProvider {
+@Component
+public class TokenProvider implements InitializingBean {
 
-    private static final String SECRET_KEY = "testKeytestKeytestKeytestKeytestKeytestKeytestKeytestKeytestKeytestKey";
+    @Getter
+    @Value("${jwt.secret-key}")
+    private String secretKey;
 
     private Key key;
+
     // 키 초기화, 설정에 대해서 좀 더 찾아보고 보강할 것
-    public TokenProvider() {
-        String encodeStr = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
+    // 20231016 InitializingBean 를 구현하여 afterPropertiesSet override하여 키 설정하도록 변경
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        String encodeStr = Base64.getEncoder().encodeToString(secretKey.getBytes());
         this.key = Keys.hmacShaKeyFor(encodeStr.getBytes());
     }
 
@@ -73,4 +82,5 @@ public class TokenProvider {
 
         return claims.getSubject();
     }
+
 }
